@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>NEXUS // Service Manager OS</title>
+<meta name="description" content="NEXUS Service Manager OS — mission board, crew visits, coaching, actions, and weekly review. Local-only, saves in your browser." />
+<meta name="theme-color" content="#07110f" />
+<link rel="icon" type="image/x-icon" href="icons/favicon.ico" />
+<link rel="icon" type="image/png" sizes="192x192" href="icons/favicon-192.png" />
+<link rel="icon" type="image/png" sizes="512x512" href="icons/favicon-512.png" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+<link rel="manifest" href="manifest.json" />
+<style>
+:root{
+  --bg:#07110f;
+  --panel:#0c1815;
+  --panel2:#10211d;
+  --text:#eafaf4;
+  --muted:#86a69a;
+  --green:#00ff87;
+  --cyan:#60efff;
+  --pink:#ff0080;
+  --yellow:#ffcc00;
+  --danger:#ff5c5c;
+  --line:#18332b;
+  --shadow:0 18px 45px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(0,255,135,.10), transparent 25%),
+    radial-gradient(circle at 100% 15%, rgba(96,239,255,.08), transparent 25%),
+    var(--bg);
+  color:var(--text);
+}
+button,input,textarea,select{font:inherit}
+.app{max-width:1180px;margin:0 auto;padding:18px 14px 90px}
+.topbar{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
+  margin-bottom:18px
+}
+.brand h1{margin:0;font-size:clamp(24px,5vw,44px);letter-spacing:-1.5px}
+.brand .sub{color:var(--muted);font-size:13px;margin-top:4px}
+.badge{
+  border:1px solid var(--line);background:rgba(16,33,29,.85);
+  padding:8px 11px;border-radius:999px;color:var(--green);font-weight:700;font-size:12px
+}
+.grid{display:grid;gap:14px}
+.metrics{grid-template-columns:repeat(4,1fr);margin-bottom:14px}
+.card{
+  background:linear-gradient(180deg,rgba(16,33,29,.96),rgba(10,24,21,.96));
+  border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:var(--shadow)
+}
+.metric .label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.metric .value{font-size:28px;font-weight:900;margin-top:6px}
+.metric .hint{font-size:12px;color:var(--muted);margin-top:4px}
+.main{grid-template-columns:1.2fr .8fr}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.section-title h2{margin:0;font-size:18px}
+.daystrip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px}
+.daybtn{
+  border:1px solid var(--line);background:var(--panel2);color:var(--muted);
+  border-radius:12px;padding:10px 8px;font-weight:800;cursor:pointer
+}
+.daybtn.active{color:#00150c;background:var(--green);border-color:var(--green)}
+.mission{
+  border-left:4px solid var(--green);
+  background:rgba(0,255,135,.06);padding:12px 14px;border-radius:12px;margin-bottom:12px
+}
+.mission .eyebrow{font-size:11px;color:var(--green);letter-spacing:.08em;text-transform:uppercase;font-weight:900}
+.mission .headline{font-size:21px;font-weight:900;margin-top:4px}
+.tasks{display:grid;gap:8px}
+.task{
+  display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;
+  border:1px solid var(--line);padding:11px 12px;border-radius:12px;background:#0c1a16
+}
+.task input{width:20px;height:20px;accent-color:var(--green)}
+.task.done .task-text{text-decoration:line-through;color:#6d817a}
+.task .tag{font-size:10px;padding:5px 8px;border-radius:999px;border:1px solid var(--line);color:var(--cyan)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.input, textarea, select{
+  width:100%;background:#081411;color:var(--text);border:1px solid var(--line);
+  border-radius:12px;padding:11px 12px;outline:none
+}
+textarea{min-height:86px;resize:vertical}
+.input:focus, textarea:focus, select:focus{border-color:var(--green)}
+.btn{
+  border:0;border-radius:12px;padding:11px 14px;font-weight:900;cursor:pointer
+}
+.btn.primary{background:var(--green);color:#00150c}
+.btn.secondary{background:#122620;color:var(--cyan);border:1px solid var(--line)}
+.btn.danger{background:#2a1116;color:#ffb4c7;border:1px solid #4d1b28}
+.stack{display:grid;gap:10px}
+.item{
+  border:1px solid var(--line);border-radius:12px;padding:12px;background:#0b1714
+}
+.item .meta{font-size:11px;color:var(--muted);margin-top:5px}
+.item .name{font-weight:900}
+.progress{
+  height:10px;background:#07100e;border-radius:999px;overflow:hidden;border:1px solid var(--line)
+}
+.progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));width:0%}
+.score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.score{
+  background:#0a1713;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center
+}
+.score .n{font-size:24px;font-weight:900}.score .l{font-size:10px;color:var(--muted);text-transform:uppercase}
+.tabs{display:flex;gap:8px;overflow:auto;padding-bottom:2px;margin-bottom:12px}
+.tab{
+  white-space:nowrap;border:1px solid var(--line);background:#10201c;color:var(--muted);
+  padding:9px 12px;border-radius:999px;font-weight:800;cursor:pointer
+}
+.tab.active{color:#00150c;background:var(--cyan);border-color:var(--cyan)}
+.panel{display:none}.panel.active{display:block}
+.quick-actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.quick{
+  text-align:left;border:1px solid var(--line);background:#0d1b17;color:var(--text);
+  border-radius:14px;padding:13px;cursor:pointer
+}
+.quick strong{display:block}.quick span{font-size:11px;color:var(--muted)}
+.footer-nav{
+  position:fixed;left:50%;bottom:10px;transform:translateX(-50%);
+  width:min(94%,760px);display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  background:rgba(6,15,13,.92);backdrop-filter:blur(14px);padding:8px;border:1px solid var(--line);border-radius:18px;
+  box-shadow:var(--shadow)
+}
+.footer-nav button{background:transparent;border:0;color:var(--muted);padding:10px;border-radius:12px;font-weight:800}
+.footer-nav button.active{background:#133028;color:var(--green)}
+.small{font-size:12px;color:var(--muted)}
+.hr{height:1px;background:var(--line);margin:14px 0}
+.kpi-bar{display:grid;grid-template-columns:120px 1fr 48px;gap:8px;align-items:center;margin:8px 0}
+.kpi-bar .mini{height:8px;background:#07100e;border-radius:999px;overflow:hidden}
+.kpi-bar .mini span{display:block;height:100%;background:linear-gradient(90deg,var(--yellow),var(--green));}
+@media(max-width:800px){
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .main{grid-template-columns:1fr}
+  .daystrip{grid-template-columns:repeat(5,minmax(72px,1fr));overflow:auto}
+  .row{grid-template-columns:1fr}
+}
+</style>
+<style id="wonderfully-magical">
+:root{--violet:#9d72ff;--lavender:#d9c7ff;--aurora:#56ffd1}body{min-height:100vh;background:radial-gradient(ellipse at 8% -10%,rgba(0,255,135,.20),transparent 34%),radial-gradient(ellipse at 96% 8%,rgba(157,114,255,.25),transparent 37%),radial-gradient(ellipse at 52% 110%,rgba(96,239,255,.13),transparent 48%),var(--bg)}body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.55;background-image:radial-gradient(circle at 20% 25%,#fff 0 1px,transparent 1.7px),radial-gradient(circle at 78% 14%,var(--lavender) 0 1px,transparent 1.8px),radial-gradient(circle at 87% 74%,var(--cyan) 0 1px,transparent 1.8px),radial-gradient(circle at 29% 83%,#fff 0 .8px,transparent 1.5px);background-size:180px 205px,248px 237px,327px 293px,139px 161px;animation:twinkle 7s ease-in-out infinite alternate}.topbar{padding:9px 0 12px;border-bottom:1px solid rgba(157,114,255,.2)}.brand h1{background:linear-gradient(100deg,#fff 2%,var(--green) 32%,var(--cyan) 58%,var(--lavender) 96%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 13px rgba(0,255,135,.2))}.badge{border-color:rgba(157,114,255,.6);background:linear-gradient(110deg,rgba(0,255,135,.16),rgba(157,114,255,.16));box-shadow:0 0 21px rgba(157,114,255,.15)}.card{position:relative;overflow:hidden;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:rgba(96,239,255,.2)}.card:before{content:"";position:absolute;inset:0 0 auto;height:1px;background:linear-gradient(90deg,transparent,var(--green),var(--cyan),var(--violet),transparent);opacity:.85}.metric .value{color:var(--lavender);text-shadow:0 0 17px rgba(157,114,255,.27)}.mission{background:linear-gradient(100deg,rgba(0,255,135,.11),rgba(96,239,255,.06),rgba(157,114,255,.09));box-shadow:inset 0 0 30px rgba(157,114,255,.06)}.mission .headline{color:#fff;text-shadow:0 0 18px rgba(96,239,255,.18)}.daybtn,.tab,.quick,.task{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}.daybtn:hover,.tab:hover,.quick:hover{transform:translateY(-2px);border-color:var(--violet);box-shadow:0 0 24px rgba(157,114,255,.17)}.daybtn.active{background:linear-gradient(120deg,var(--green),var(--cyan));box-shadow:0 0 22px rgba(0,255,135,.25)}.btn{position:relative;overflow:hidden}.btn:after{content:"";position:absolute;inset:-90% 55% -90% -35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.48),transparent);transform:rotate(18deg);transition:transform .55s ease}.btn:hover:after{transform:translateX(240%) rotate(18deg)}.btn.primary{background:linear-gradient(105deg,var(--green),var(--cyan));box-shadow:0 0 23px rgba(0,255,135,.18)}.progress span,.kpi-bar .mini span{background:linear-gradient(90deg,var(--green),var(--cyan),var(--violet))}.footer-nav{border-color:rgba(157,114,255,.35);background:rgba(6,15,13,.78)}.footer-nav button.active{background:linear-gradient(120deg,rgba(0,255,135,.18),rgba(157,114,255,.18));color:var(--lavender)}@keyframes twinkle{to{opacity:.25;transform:scale(1.025)}}@media(prefers-reduced-motion:reduce){body:before{animation:none}.btn:after{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">
+      <h1>NEXUS // Service Manager OS</h1>
+      <div class="sub">Buda Operations • Leadership cockpit • Built for Anthony</div>
+    </div>
+    <div class="badge" id="todayBadge">LIVE WEEK</div>
+  </div>
+
+  <div class="grid metrics">
+    <div class="card metric"><div class="label">Week Completion</div><div class="value" id="weekPct">0%</div><div class="hint">Tasks completed</div></div>
+    <div class="card metric"><div class="label">Crew Visits</div><div class="value" id="visitsMetric">0</div><div class="hint">Target 6+</div></div>
+    <div class="card metric"><div class="label">Coaching Logged</div><div class="value" id="coachMetric">0</div><div class="hint">This week</div></div>
+    <div class="card metric"><div class="label">Open Actions</div><div class="value" id="actionsMetric">0</div><div class="hint">Needs follow-up</div></div>
+  </div>
+
+  <div class="grid main">
+    <section class="card">
+      <div class="section-title"><h2>Mission Board</h2><span class="small">Tap a day</span></div>
+      <div class="daystrip" id="dayStrip"></div>
+      <div class="mission">
+        <div class="eyebrow" id="missionLabel"></div>
+        <div class="headline" id="missionHeadline"></div>
+        <div class="small" id="missionDetail"></div>
+      </div>
+      <div class="tasks" id="taskList"></div>
+      <div class="hr"></div>
+      <button class="btn secondary" id="resetDay">Reset selected day</button>
+    </section>
+
+    <aside class="stack">
+      <section class="card">
+        <div class="section-title"><h2>Quick Capture</h2></div>
+        <div class="quick-actions">
+          <button class="quick" data-open="coach"><strong>Log Coaching</strong><span>Employee, topic, follow-up</span></button>
+          <button class="quick" data-open="visit"><strong>Log Crew Visit</strong><span>QA, safety, efficiency</span></button>
+          <button class="quick" data-open="candidate"><strong>Add Interview</strong><span>Candidate pipeline</span></button>
+          <button class="quick" data-open="action"><strong>Add Action</strong><span>Owner and due date</span></button>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-title"><h2>Leadership Pulse</h2></div>
+        <div class="score-grid">
+          <div class="score"><div class="n" id="pulsePeople">0</div><div class="l">People</div></div>
+          <div class="score"><div class="n" id="pulseField">0</div><div class="l">Field</div></div>
+          <div class="score"><div class="n" id="pulseSystem">0</div><div class="l">Systems</div></div>
+        </div>
+        <div class="hr"></div>
+        <div class="kpi-bar"><span class="small">Crew visits</span><div class="mini"><span id="visitBar"></span></div><strong id="visitKpi">0/6</strong></div>
+        <div class="kpi-bar"><span class="small">Coaching</span><div class="mini"><span id="coachBar"></span></div><strong id="coachKpi">0/8</strong></div>
+        <div class="kpi-bar"><span class="small">Interviews</span><div class="mini"><span id="intBar"></span></div><strong id="intKpi">0/3</strong></div>
+      </section>
+
+      <section class="card">
+        <div class="section-title"><h2>Weekly Win</h2></div>
+        <textarea id="weeklyWin" placeholder="What did you improve this week?"></textarea>
+      </section>
+    </aside>
+  </div>
+
+  <section class="card" style="margin-top:14px">
+    <div class="tabs" id="tabs">
+      <button class="tab active" data-tab="log">Activity Log</button>
+      <button class="tab" data-tab="coach">Coaching</button>
+      <button class="tab" data-tab="visit">Crew Visits</button>
+      <button class="tab" data-tab="candidate">Interviews</button>
+      <button class="tab" data-tab="action">Actions</button>
+      <button class="tab" data-tab="week">Weekly Review</button>
+    </div>
+
+    <div class="panel active" id="panel-log"><div class="stack" id="activityLog"></div></div>
+
+    <div class="panel" id="panel-coach">
+      <div class="row">
+        <input class="input" id="coachName" placeholder="Employee / Crew" />
+        <select id="coachTopic"><option>Performance</option><option>Safety</option><option>Quality</option><option>Attendance</option><option>Leadership</option><option>Customer Service</option></select>
+      </div>
+      <textarea id="coachNotes" placeholder="Conversation notes, commitments, next step"></textarea>
+      <div class="row">
+        <input class="input" id="coachFollow" type="date" />
+        <button class="btn primary" onclick="addCoaching()">Save coaching record</button>
+      </div>
+      <div class="hr"></div><div class="stack" id="coachList"></div>
+    </div>
+
+    <div class="panel" id="panel-visit">
+      <div class="row">
+        <input class="input" id="visitCrew" placeholder="Crew ID / names" />
+        <select id="visitFocus"><option>QA</option><option>Safety</option><option>Efficiency</option><option>Training</option><option>Equipment</option><option>Morale</option></select>
+      </div>
+      <textarea id="visitNotes" placeholder="Observations, corrections, wins, follow-up"></textarea>
+      <button class="btn primary" onclick="addVisit()">Save crew visit</button>
+      <div class="hr"></div><div class="stack" id="visitList"></div>
+    </div>
+
+    <div class="panel" id="panel-candidate">
+      <div class="row">
+        <input class="input" id="candName" placeholder="Candidate name" />
+        <select id="candStatus"><option>Scheduled</option><option>Interviewed</option><option>Second Review</option><option>Offer</option><option>Hold</option><option>Declined</option></select>
+      </div>
+      <textarea id="candNotes" placeholder="Strengths, concerns, availability, next step"></textarea>
+      <button class="btn primary" onclick="addCandidate()">Save candidate</button>
+      <div class="hr"></div><div class="stack" id="candidateList"></div>
+    </div>
+
+    <div class="panel" id="panel-action">
+      <div class="row">
+        <input class="input" id="actionTitle" placeholder="Action item" />
+        <input class="input" id="actionOwner" placeholder="Owner" />
+      </div>
+      <div class="row">
+        <input class="input" id="actionDue" type="date" />
+        <select id="actionPriority"><option>High</option><option>Medium</option><option>Low</option></select>
+      </div>
+      <button class="btn primary" onclick="addAction()">Add action</button>
+      <div class="hr"></div><div class="stack" id="actionList"></div>
+    </div>
+
+    <div class="panel" id="panel-week">
+      <div class="row">
+        <div>
+          <label class="small">Revenue</label>
+          <input class="input" id="wrRevenue" placeholder="$" />
+        </div>
+        <div>
+          <label class="small">Labor %</label>
+          <input class="input" id="wrLabor" placeholder="%" />
+        </div>
+      </div>
+      <div class="row">
+        <div><label class="small">QA audits</label><input class="input" id="wrQa" type="number" min="0"/></div>
+        <div><label class="small">Customer escalations closed</label><input class="input" id="wrEsc" type="number" min="0"/></div>
+      </div>
+      <textarea id="wrNotes" placeholder="What changed, what worked, what needs to change next week?"></textarea>
+      <button class="btn primary" onclick="saveWeeklyReview()">Save weekly review</button>
+      <div class="hr"></div><div id="weeklySummary"></div>
+    </div>
+  </section>
+</div>
+
+<div class="footer-nav">
+  <button class="active" onclick="scrollToTop()">Today</button>
+  <button onclick="openTab('coach')">Coach</button>
+  <button onclick="openTab('visit')">Field</button>
+  <button onclick="openTab('week')">Review</button>
+</div>
+
+<script>
+const days = {
+  Sunday:{
+    label:"FIELD SUPPORT & TRAINING",
+    headline:"Launch the week in the field.",
+    detail:"Visit active crews, inspect safety/quality/efficiency, coach in real time, document while context is fresh.",
+    tasks:[
+      ["Review attendance and call-outs","Systems"],
+      ["Review crew assignments and route risk","Systems"],
+      ["Visit active crews","Field"],
+      ["Observe safety, quality, and efficiency","Field"],
+      ["Coach technicians and Team Leads","People"],
+      ["Document coaching conversations","People"],
+      ["Check open callbacks and customer issues","Systems"],
+      ["Review revenue and labor trend before close","Systems"]
+    ]},
+  Monday:{
+    label:"SHOP / OFFICE SUPPORT",
+    headline:"Develop people and close loops.",
+    detail:"One-on-ones, interviews, documentation, training plans, equipment, and leadership follow-up.",
+    tasks:[
+      ["Meet with Team Leads","People"],
+      ["One-on-one coaching and follow-up","People"],
+      ["Interview candidates","People"],
+      ["Review hiring pipeline","Systems"],
+      ["Review FieldPulse / Clerk / reporting","Systems"],
+      ["Check warehouse and equipment needs","Systems"],
+      ["Prepare training or safety material","People"],
+      ["Weekly leadership development meeting","People"]
+    ]},
+  Tuesday:{
+    label:"FIELD SUPPORT & TRAINING",
+    headline:"Turn performance data into field action.",
+    detail:"Use labor, revenue, QA, and attendance signals to decide where your time has the highest impact.",
+    tasks:[
+      ["Review labor % by crew","Systems"],
+      ["Review revenue per truck","Systems"],
+      ["Identify highest-risk crew","Systems"],
+      ["Visit priority crew","Field"],
+      ["Coach one process improvement","People"],
+      ["Verify corrections from prior coaching","Field"],
+      ["Check truck / equipment readiness","Field"],
+      ["Document wins and unresolved risks","Systems"]
+    ]},
+  Wednesday:{
+    label:"SHOP / OFFICE SUPPORT",
+    headline:"Improve the system, not only the shift.",
+    detail:"Build structure: reporting, SOPs, training, interviews, inventory planning, and operational problem-solving.",
+    tasks:[
+      ["Review weekly trend and moving average","Systems"],
+      ["Review Open Employee Concerns","People"],
+      ["Conduct interviews","People"],
+      ["Update coaching documentation","People"],
+      ["Update SOPs / training material","Systems"],
+      ["Plan equipment and warehouse needs","Systems"],
+      ["Review callbacks / partials / quality issues","Systems"],
+      ["Build next-week priorities","Systems"]
+    ]},
+  Thursday:{
+    label:"FIELD SUPPORT & TRAINING",
+    headline:"Finish strong and verify standards.",
+    detail:"Field visibility, follow-through, recognition, risk control, and preparation for next week.",
+    tasks:[
+      ["Visit active crews","Field"],
+      ["Verify safety standards","Field"],
+      ["Verify QA and cleanup standards","Field"],
+      ["Recognize strong performance","People"],
+      ["Follow up on unresolved coaching","People"],
+      ["Check customer escalations","Systems"],
+      ["Review weekly labor and revenue","Systems"],
+      ["Write weekly win and next-week risk","Systems"]
+    ]}
+};
+
+const storeKey='nexus_manager_os_v1';
+let state = JSON.parse(localStorage.getItem(storeKey) || 'null') || {
+  selectedDay:'Sunday', done:{}, coaching:[], visits:[], candidates:[], actions:[], activity:[], weeklyWin:'', weeklyReview:{}
+};
+
+function save(){ localStorage.setItem(storeKey, JSON.stringify(state)); renderAll(); }
+function stamp(){ return new Date().toLocaleString([], {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}); }
+function addActivity(type,text){ state.activity.unshift({type,text,time:stamp()}); state.activity=state.activity.slice(0,50); }
+
+function renderDays(){
+  const strip=document.getElementById('dayStrip'); strip.innerHTML='';
+  Object.keys(days).forEach(d=>{
+    const b=document.createElement('button'); b.className='daybtn'+(state.selectedDay===d?' active':'');
+    b.textContent=d.slice(0,3).toUpperCase(); b.onclick=()=>{state.selectedDay=d;save()}; strip.appendChild(b);
+  });
+}
+function renderMission(){
+  const d=days[state.selectedDay];
+  missionLabel.textContent=d.label; missionHeadline.textContent=d.headline; missionDetail.textContent=d.detail;
+  taskList.innerHTML='';
+  d.tasks.forEach((t,i)=>{
+    const key=state.selectedDay+'-'+i, checked=!!state.done[key];
+    const el=document.createElement('label'); el.className='task'+(checked?' done':'');
+    el.innerHTML=`<input type="checkbox" ${checked?'checked':''}><div class="task-text">${t[0]}</div><div class="tag">${t[1]}</div>`;
+    el.querySelector('input').onchange=e=>{state.done[key]=e.target.checked; addActivity('Task',`${state.selectedDay}: ${t[0]} ${e.target.checked?'completed':'reopened'}`); save();};
+    taskList.appendChild(el);
+  });
+}
+function renderMetrics(){
+  const total=Object.values(days).reduce((a,d)=>a+d.tasks.length,0);
+  const done=Object.values(state.done).filter(Boolean).length;
+  weekPct.textContent=Math.round(done/total*100)+'%';
+  visitsMetric.textContent=state.visits.length; coachMetric.textContent=state.coaching.length;
+  actionsMetric.textContent=state.actions.filter(a=>!a.done).length;
+  const counts={People:0,Field:0,Systems:0};
+  Object.keys(days).forEach(day=>days[day].tasks.forEach((t,i)=>{ if(state.done[day+'-'+i]) counts[t[1]]++; }));
+  pulsePeople.textContent=counts.People; pulseField.textContent=counts.Field; pulseSystem.textContent=counts.Systems;
+  visitKpi.textContent=`${state.visits.length}/6`; coachKpi.textContent=`${state.coaching.length}/8`; intKpi.textContent=`${state.candidates.length}/3`;
+  visitBar.style.width=Math.min(100,state.visits.length/6*100)+'%';
+  coachBar.style.width=Math.min(100,state.coaching.length/8*100)+'%';
+  intBar.style.width=Math.min(100,state.candidates.length/3*100)+'%';
+}
+function renderList(id,items,fn){
+  const el=document.getElementById(id); el.innerHTML='';
+  if(!items.length){ el.innerHTML='<div class="small">No records yet.</div>'; return; }
+  items.forEach((x,i)=>el.insertAdjacentHTML('beforeend',fn(x,i)));
+}
+function renderAll(){
+  renderDays(); renderMission(); renderMetrics();
+  weeklyWin.value=state.weeklyWin||'';
+  renderList('activityLog',state.activity,x=>`<div class="item"><div class="name">${x.type}</div><div>${x.text}</div><div class="meta">${x.time}</div></div>`);
+  renderList('coachList',state.coaching,(x,i)=>`<div class="item"><div class="name">${x.name} • ${x.topic}</div><div>${x.notes||''}</div><div class="meta">Follow-up: ${x.follow||'not set'} • ${x.time}</div></div>`);
+  renderList('visitList',state.visits,x=>`<div class="item"><div class="name">${x.crew} • ${x.focus}</div><div>${x.notes||''}</div><div class="meta">${x.time}</div></div>`);
+  renderList('candidateList',state.candidates,x=>`<div class="item"><div class="name">${x.name} • ${x.status}</div><div>${x.notes||''}</div><div class="meta">${x.time}</div></div>`);
+  renderList('actionList',state.actions,(x,i)=>`<div class="item"><label><input type="checkbox" ${x.done?'checked':''} onchange="toggleAction(${i})"> <span class="name">${x.title}</span></label><div>${x.owner||'Unassigned'} • ${x.priority}</div><div class="meta">Due: ${x.due||'not set'}</div></div>`);
+  const w=state.weeklyReview||{};
+  weeklySummary.innerHTML = Object.keys(w).length ? `<div class="item"><div class="name">Saved Weekly Review</div><div>Revenue: ${w.revenue||'—'} • Labor: ${w.labor||'—'}</div><div>QA audits: ${w.qa||0} • Escalations closed: ${w.esc||0}</div><div class="meta">${w.notes||''}</div></div>`:'<div class="small">No weekly review saved.</div>';
+}
+function openTab(name){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+name));
+  document.getElementById('panel-'+name).scrollIntoView({behavior:'smooth',block:'start'});
+}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>openTab(b.dataset.tab));
+document.querySelectorAll('.quick').forEach(b=>b.onclick=()=>openTab(b.dataset.open));
+resetDay.onclick=()=>{days[state.selectedDay].tasks.forEach((_,i)=>delete state.done[state.selectedDay+'-'+i]);save()};
+weeklyWin.oninput=e=>{state.weeklyWin=e.target.value;localStorage.setItem(storeKey,JSON.stringify(state))};
+
+function addCoaching(){
+  const name=coachName.value.trim(); if(!name) return;
+  state.coaching.unshift({name,topic:coachTopic.value,notes:coachNotes.value.trim(),follow:coachFollow.value,time:stamp()});
+  addActivity('Coaching',`${name}: ${coachTopic.value}`); coachName.value='';coachNotes.value='';coachFollow.value='';save();openTab('coach');
+}
+function addVisit(){
+  const crew=visitCrew.value.trim(); if(!crew) return;
+  state.visits.unshift({crew,focus:visitFocus.value,notes:visitNotes.value.trim(),time:stamp()});
+  addActivity('Crew Visit',`${crew}: ${visitFocus.value}`); visitCrew.value='';visitNotes.value='';save();openTab('visit');
+}
+function addCandidate(){
+  const name=candName.value.trim(); if(!name) return;
+  state.candidates.unshift({name,status:candStatus.value,notes:candNotes.value.trim(),time:stamp()});
+  addActivity('Interview',`${name}: ${candStatus.value}`); candName.value='';candNotes.value='';save();openTab('candidate');
+}
+function addAction(){
+  const title=actionTitle.value.trim(); if(!title) return;
+  state.actions.unshift({title,owner:actionOwner.value.trim(),due:actionDue.value,priority:actionPriority.value,done:false});
+  addActivity('Action',title); actionTitle.value='';actionOwner.value='';actionDue.value='';save();openTab('action');
+}
+function toggleAction(i){state.actions[i].done=!state.actions[i].done;save()}
+function saveWeeklyReview(){
+  state.weeklyReview={revenue:wrRevenue.value,labor:wrLabor.value,qa:wrQa.value,esc:wrEsc.value,notes:wrNotes.value.trim(),time:stamp()};
+  addActivity('Weekly Review','Weekly performance review saved');save();openTab('week');
+}
+function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
+todayBadge.textContent=new Date().toLocaleDateString([], {weekday:'short',month:'short',day:'numeric'}).toUpperCase();
+renderAll();
+</script>
+<script id="magic-ux">(()=>{document.title='✦ '+document.title;const b=document.querySelector('.brand .sub');if(b&&!document.querySelector('.magic-note')){const n=document.createElement('span');n.className='magic-note';n.textContent='  ✦ Command with clarity.';n.style.cssText='color:var(--lavender);text-shadow:0 0 12px rgba(157,114,255,.5)';b.append(n)}})()</script>
+</body>
+</html>
