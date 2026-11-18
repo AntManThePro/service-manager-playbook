@@ -155,6 +155,9 @@ textarea{min-height:86px;resize:vertical}
     <div class="badge" id="todayBadge">LIVE WEEK</div>
   </div>
 
+  <!-- 🐜 Easter egg: tap the "NEXUS // Service Manager OS" title 3 times -->
+  <div id="antEgg" class="card" style="display:none;margin-top:14px">🐜 <strong>DoubleA's field note:</strong> three taps and you found the ant. It doesn't run the crew, it doesn't close the tickets — it just shows up every night, same as you. <span class="small">Fine print: this ant is not a KPI. No badge, no bonus, no meeting. Just proof somebody read the whole board. Not perfect, just real.</span></div>
+
   <div class="grid metrics">
     <div class="card metric"><div class="label">Week Completion</div><div class="value" id="weekPct">0%</div><div class="hint">Tasks completed</div></div>
     <div class="card metric"><div class="label">Crew Visits</div><div class="value" id="visitsMetric">0</div><div class="hint">Target 6+</div></div>
@@ -464,6 +467,8 @@ function saveWeeklyReview(){
 function scrollToTop(){window.scrollTo({top:0,behavior:'smooth'})}
 todayBadge.textContent=new Date().toLocaleDateString([], {weekday:'short',month:'short',day:'numeric'}).toUpperCase();
 renderAll();
+// 🐜 Easter egg: triple-tap the brand title to reveal DoubleA's field note.
+(function(){var taps=0;var h=document.querySelector('.brand h1');if(!h)return;h.style.cursor='pointer';h.addEventListener('click',function(){taps++;if(taps>=3){taps=0;var e=document.getElementById('antEgg');if(e)e.style.display=e.style.display==='none'?'block':'none';}});})();
 </script>
 <script id="magic-ux">(()=>{document.title='✦ '+document.title;const b=document.querySelector('.brand .sub');if(b&&!document.querySelector('.magic-note')){const n=document.createElement('span');n.className='magic-note';n.textContent='  ✦ Command with clarity.';n.style.cssText='color:var(--lavender);text-shadow:0 0 12px rgba(157,114,255,.5)';b.append(n)}})()</script>
 </body>

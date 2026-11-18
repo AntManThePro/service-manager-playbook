@@ -41,3 +41,22 @@ the single-file playbook family:
 - No `Math.random`, no seeded demo records — starts empty.
 - No banned branding (godmode2025.net / TwistedGenius), 0 hits.
 - No fetch/XHR, no secrets.
+
+## Live
+
+https://service-manager-playbook.netlify.app/
+
+## How to use
+
+1. Open the live site — it starts empty, just for you.
+2. Tap a day on the Mission Board and check tasks off as the week moves.
+3. Use Quick Capture to log coaching, a crew visit, an interview, or an action.
+4. Check Leadership Pulse for the week, and save a Weekly Win + review before Friday.
+
+Everything saves in your browser only (localStorage). No account, no cloud.
+
+## Links
+
+- Live site: https://service-manager-playbook.netlify.app/
+- NEXUS World Hub: https://nexus-world-hub.netlify.app/
+- Repo: https://github.com/AntManThePro/service-manager-playbook
